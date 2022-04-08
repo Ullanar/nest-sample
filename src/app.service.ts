@@ -1,31 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ITask } from './Interfaces';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Task } from './database/models/task.entity';
 
 @Injectable()
 export class AppService {
-  getHello(): Array<ITask> {
-    return [
-      {
-        id: 1,
-        title: 'Task 1',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt',
-        deadline: new Date(),
-      },
-      {
-        id: 2,
-        title: 'Task 2',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt',
-        deadline: new Date(),
-      },
-      {
-        id: 3,
-        title: 'Task 3',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt',
-        deadline: new Date(),
-      },
-    ];
+  constructor(
+    @Inject('TASK_REPOSITORY')
+    private taskRepository: Repository<Task>,
+  ) {}
+
+  getAllTasks() {
+    try {
+      return this.taskRepository.find();
+    } catch (err) {
+      return Logger.error(`AppService.getHello, ${err}`);
+    }
   }
 }
